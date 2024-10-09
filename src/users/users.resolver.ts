@@ -1,6 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-//import { User } from '@prisma/client';
 import { UserType } from './user.type';
 
 @Resolver(() => UserType)
