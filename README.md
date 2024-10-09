@@ -60,4 +60,5 @@ $ npm run test:cov
 
 ## Stay in touch
 
-- Author - [Yong Yi Wong](yongyiwang.fullstack@gmail.com)
+- Author - [Yong Yi Wong](https://github.com/yongyiwong)
+- Contact - [yongyiwang.fullstack@gmail.com]
