@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ProjectType } from '../projects/project.type';
 
 @ObjectType()
 export class UserType {
@@ -10,4 +11,7 @@ export class UserType {
 
   @Field()
   email: string;
+
+  @Field(() => [ProjectType], { nullable: true }) // Add this line
+  projects?: ProjectType[]; // Relationship with projects
 }
