@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
 import { ProjectType } from './project.type';
 import { Project } from '@prisma/client';
@@ -10,7 +10,7 @@ export class ProjectsResolver {
   @Mutation(() => ProjectType)
   async createProject(
     @Args('title') title: string,
-    @Args('userId') userId: number,
+    @Args('userId', { type: () => Int }) userId: number,
   ): Promise<Project> {
     return this.projectsService.createProject(title, userId);
   }
@@ -21,7 +21,9 @@ export class ProjectsResolver {
   }
 
   @Query(() => [ProjectType])
-  async projectsByUserId(@Args('userId') userId: number): Promise<Project[]> {
+  async projectsByUserId(
+    @Args('userId', { type: () => Int }) userId: number,
+  ): Promise<Project[]> {
     return this.projectsService.findProjectsByUserId(userId);
   }
 }
