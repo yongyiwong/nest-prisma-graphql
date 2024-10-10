@@ -15,7 +15,7 @@ import { ProjectsService } from 'src/projects/projects.service';
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
-    private readonly projectsService: ProjectsService,
+    private projectsService: ProjectsService,
   ) {}
 
   @Mutation(() => UserType)

@@ -2,17 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ProjectType {
+  id: Int!
+  title: String!
+  userId: Int!
+}
+
 type UserType {
   id: Int!
   name: String!
   email: String!
+  projects: [ProjectType!]
 }
 
 type Query {
   users: [UserType!]!
+  projects: [ProjectType!]!
+  projectsByUserId(userId: Float!): [ProjectType!]!
 }
 
 type Mutation {
   createUser(name: String!, email: String!): UserType!
   deleteUser(id: Float!): UserType!
+  createProject(title: String!, userId: Float!): ProjectType!
 }
