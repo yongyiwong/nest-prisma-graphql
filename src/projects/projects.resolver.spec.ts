@@ -15,4 +15,6 @@ describe('ProjectsResolver', () => {
   it('should be defined', () => {
     expect(resolver).toBeDefined();
   });
+
+  // TODO: More test cases coming, please check uesrs.resolver.spec.ts to refer.
 });
