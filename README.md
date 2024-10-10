@@ -24,8 +24,8 @@
 
 ## Description
 
-Simple example managing projects to users using NestJS
-Many functionalities upcoming.
+- Simple example managing projects for users using NestJS/Prisma.
+- Many functionalities upcoming.
 
 ## Project setup
 
