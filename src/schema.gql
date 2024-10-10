@@ -25,5 +25,13 @@ type Query {
 type Mutation {
   createUser(name: String!, email: String!): UserType!
   deleteUser(id: Float!): UserType!
-  createProject(title: String!, userId: Int!): ProjectType!
+  createProject(createProjectsInput: CreateProjectsInput!): ProjectType!
+}
+
+input CreateProjectsInput {
+  """User Id"""
+  userId: Int!
+
+  """Project title"""
+  title: String!
 }
