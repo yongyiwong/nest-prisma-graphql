@@ -26,4 +26,8 @@ export class ProjectsService {
       },
     });
   }
+
+  async deleteProjectByUserId(userId: number) {
+    return this.prisma.project.deleteMany({ where: { userId } });
+  }
 }
