@@ -4,11 +4,13 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { UsersService } from '../src/users/users.service';
 import { faker } from '@faker-js/faker';
-import { UserType } from 'src/users/user.type';
+import { UserType } from '../src/users/user.type';
+import { ProjectsService } from '../src/projects/projects.service';
 
 describe('Projects GraphQL (e2e)', () => {
   let app: INestApplication;
   let userService: UsersService;
+  let projectService: ProjectsService;
   let user: UserType;
 
   beforeAll(async () => {
@@ -18,7 +20,7 @@ describe('Projects GraphQL (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     userService = app.get<UsersService>(UsersService);
-
+    projectService = app.get<ProjectsService>(ProjectsService);
     await app.init();
 
     user = await userService.createUser(
@@ -28,6 +30,7 @@ describe('Projects GraphQL (e2e)', () => {
   });
 
   afterAll(async () => {
+    await projectService.deleteProjectByUserId(user.id);
     await userService.deleteUser(user.id);
     await app.close();
   });
