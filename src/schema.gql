@@ -6,6 +6,7 @@ type ProjectType {
   id: Int!
   title: String!
   userId: Int!
+  user: UserType!
 }
 
 type UserType {
