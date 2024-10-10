@@ -25,4 +25,5 @@ model Project {
   title  String
   userId Int
   user   User  @relation("UserProjects", fields: [userId], references: [id]) // Foreign key
+  @@index([userId]) // Create an index on the userId field
 }
