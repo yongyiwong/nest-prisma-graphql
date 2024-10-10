@@ -17,4 +17,16 @@ describe('ProjectsResolver', () => {
   });
 
   // TODO: More test cases coming, please check uesrs.resolver.spec.ts to refer.
+
+  //TODO: At least have a test with this query to check creating projects works.
+  /**
+   * 
+   * mutation createProject($_createProjectsInput:CreateProjectsInput!) {
+        createProject(createProjectsInput: $_createProjectsInput) {
+          id
+          title
+          userId
+        }
+     }
+   */
 });
