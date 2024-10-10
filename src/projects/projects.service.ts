@@ -4,7 +4,10 @@ import { Project } from '@prisma/client';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    //private projectsQueue: Queue,
+  ) {}
 
   async createProject(title: string, userId: number): Promise<Project> {
     return this.prisma.project.create({
@@ -30,4 +33,8 @@ export class ProjectsService {
   async deleteProjectByUserId(userId: number) {
     return this.prisma.project.deleteMany({ where: { userId } });
   }
+
+  // async scheduleProjectFetch(userId: number) {
+  //   await this.projectsQueue.add('fetchProjects', { userId });
+  // }
 }

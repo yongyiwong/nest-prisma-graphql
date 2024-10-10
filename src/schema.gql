@@ -35,3 +35,7 @@ input CreateProjectsInput {
   """Project title"""
   title: String!
 }
+
+type Subscription {
+  projectCreated: ProjectType!
+}

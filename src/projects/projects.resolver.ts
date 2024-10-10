@@ -6,6 +6,7 @@ import {
   Int,
   ResolveField,
   Parent,
+  Subscription,
 } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
 import { ProjectType } from './project.type';
@@ -13,6 +14,9 @@ import { UserType } from '../users/user.type';
 import { Project } from '@prisma/client';
 import { UsersService } from '../users/users.service';
 import { CreateProjectsInput } from './dto/create-projects.input';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubSub = new PubSub();
 
 @Resolver(() => ProjectType)
 export class ProjectsResolver {
@@ -25,10 +29,17 @@ export class ProjectsResolver {
   async createProject(
     @Args('createProjectsInput') createProjectsInput: CreateProjectsInput,
   ): Promise<Project> {
-    return this.projectsService.createProject(
+    const project = this.projectsService.createProject(
       createProjectsInput.title,
       createProjectsInput.userId,
     );
+
+    pubSub.publish('projectCreated', { projectCreated: project });
+
+    // Optionally schedule a job
+    //await this.projectsService.scheduleProjectFetch(createProjectsInput.userId);
+
+    return project;
   }
 
   @Query(() => [ProjectType])
@@ -46,5 +57,10 @@ export class ProjectsResolver {
   @ResolveField(() => UserType) // Resolver for the user field
   async user(@Parent() project: Project): Promise<UserType | null> {
     return this.usersService.findUserById(project.userId); // Fetch user based on userId from the project
+  }
+
+  @Subscription(() => ProjectType)
+  projectCreated() {
+    return pubSub.asyncIterator('projectCreated');
   }
 }
