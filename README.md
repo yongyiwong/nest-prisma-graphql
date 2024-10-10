@@ -24,7 +24,8 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Simple example managing projects to users using NestJS
+Many functionalities upcoming.
 
 ## Project setup
 
