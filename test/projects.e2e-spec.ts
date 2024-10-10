@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../src/users/users.service';
 import { faker } from '@faker-js/faker';
 import { UserType } from 'src/users/user.type';
 
-describe('Users GraphQL (e2e)', () => {
+describe('Projects GraphQL (e2e)', () => {
   let app: INestApplication;
   let userService: UsersService;
   let user: UserType;

@@ -10,7 +10,7 @@ import { UsersService } from './users.service';
 import { UserType } from './user.type';
 import { ProjectType } from '../projects/project.type';
 import { Project, User } from '@prisma/client';
-import { ProjectsService } from 'src/projects/projects.service';
+import { ProjectsService } from '../projects/projects.service';
 @Resolver(() => UserType)
 export class UsersResolver {
   constructor(

@@ -11,7 +11,7 @@ import { ProjectsService } from './projects.service';
 import { ProjectType } from './project.type';
 import { UserType } from '../users/user.type';
 import { Project } from '@prisma/client';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Resolver(() => ProjectType)
 export class ProjectsResolver {
