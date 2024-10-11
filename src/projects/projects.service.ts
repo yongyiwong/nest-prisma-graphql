@@ -45,7 +45,6 @@ export class ProjectsService {
 
   // Subscription resolver
   getProjectCreated() {
-console.log('Subscription resolver!!!')    
     return this.pubSub.asyncIterator('projectCreated');
   }
 }
