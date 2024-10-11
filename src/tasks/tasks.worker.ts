@@ -25,10 +25,10 @@ export class TasksWorker extends WorkerHost {
 
   async process(job: Job) {
     // This method will be called whenever a job is processed
-    console.log(`Processing job: ${job.id}`);
+    //console.log(`Processing job: ${job.id}`);
 
     // Your logic to handle the job
     // For example, fetching projects or performing other tasks
-    console.log(`Job data:`, job.data);
+    //console.log(`Job data:`, job.data);
   }
 }

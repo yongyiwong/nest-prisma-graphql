@@ -29,17 +29,19 @@ export class ProjectsResolver {
   async createProject(
     @Args('createProjectsInput') createProjectsInput: CreateProjectsInput,
   ): Promise<Project> {
-    const project = this.projectsService.createProject(
-      createProjectsInput.title,
-      createProjectsInput.userId,
-    );
+    try {
+      const project = this.projectsService.createProject(
+        createProjectsInput.title,
+        createProjectsInput.userId,
+      );
 
-    pubSub.publish('projectCreated', { projectCreated: project });
+      pubSub.publish('projectCreated', { projectCreated: project });
 
-    // Optionally schedule a job
-    //await this.projectsService.scheduleProjectFetch(createProjectsInput.userId);
-
-    return project;
+      return project;
+    } catch (e) {
+      console.error('Error creating project:', e);
+      throw new Error('Could not create project');
+    }
   }
 
   @Query(() => [ProjectType])
@@ -59,6 +61,13 @@ export class ProjectsResolver {
     return this.usersService.findUserById(project.userId); // Fetch user based on userId from the project
   }
 
+  //   @Subscription(() => ProjectType, {
+  //     filter: (payload, variables) => {
+  // console.log('subscription', payload);
+  // console.log('subscription variables', variables);
+  //       return payload.userId === variables.userId; // Only send update if userId matches
+  //     },
+  //   })
   @Subscription(() => ProjectType)
   projectCreated() {
     return pubSub.asyncIterator('projectCreated');

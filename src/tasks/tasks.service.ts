@@ -10,12 +10,13 @@ export class TasksService {
 
   // Method to schedule a job
   async scheduleIntervalJob() {
+    return;
     await this.queue.add(
       'fetchProjectsJob',
       {},
       {
         repeat: {
-          every: 1000, // Schedule to run every 10 seconds
+          every: 100000, // Schedule to run every 10 seconds
         },
       },
     );

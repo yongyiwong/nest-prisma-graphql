@@ -7,7 +7,7 @@ async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
   const tasksService = app.get(TasksService);
-  await tasksService.scheduleIntervalJob();   
+  await tasksService.scheduleIntervalJob();
   await app.listen(3000);
 }
 bootstrap();
