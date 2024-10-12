@@ -11,7 +11,7 @@ describe('Projects GraphQL (e2e)', () => {
   let app: INestApplication;
   let userService: UsersService;
   let projectService: ProjectsService;
-  let user: UserType;
+  let user: Omit<UserType, 'password'>;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -23,10 +23,19 @@ describe('Projects GraphQL (e2e)', () => {
     projectService = app.get<ProjectsService>(ProjectsService);
     await app.init();
 
-    user = await userService.createUser(
-      faker.person.firstName(),
-      faker.internet.email(),
-    );
+    const fakeName = faker.person.firstName();
+    const fakeEmail = faker.internet.email();
+    const fakeUserName = faker.string.alphanumeric();
+    const fakeBio = faker.person.bio();
+    const fakePassword = faker.string.alphanumeric();
+
+    user = await userService.createUser({
+      name: fakeName,
+      email: fakeEmail,
+      username: fakeUserName,
+      password: fakePassword,
+      bio: fakeBio,
+    });
   });
 
   afterAll(async () => {
@@ -38,8 +47,8 @@ describe('Projects GraphQL (e2e)', () => {
   it('should create a new project', async () => {
     const projectTitle = faker.lorem.sentence();
     const createProjectMutation = `
-      mutation createProject($title: String!, $userId: Int!) {
-        createProject(title: $title, userId: $userId) {
+      mutation createProject($createProjectsInput:CreateProjectsInput!) {
+        createProject(createProjectsInput: $createProjectsInput) {
           id
           title
           userId
@@ -52,8 +61,10 @@ describe('Projects GraphQL (e2e)', () => {
       .send({
         query: createProjectMutation,
         variables: {
-          title: projectTitle,
-          userId: user.id,
+          createProjectsInput: {
+            title: projectTitle,
+            userId: user.id,
+          },
         },
       })
       .expect(200);

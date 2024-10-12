@@ -3,21 +3,33 @@ import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUsersInput } from './dto/create-users.input';
 import { UserType } from './user.type';
-import { UtilsService } from 'src/shared/utils/utils.service';
+import { UtilsService } from '../shared/utils/utils.service';
+import { BcryptService } from '../shared/hashing/bcrypt.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private bcryptService: BcryptService,
+  ) {}
 
-  async createUser(createUsersInput: CreateUsersInput): Promise<User> {
-    return this.prisma.user.create({
-      data: {
-        name: createUsersInput.name,
-        email: createUsersInput.email,
-        username: createUsersInput.username,
-        password: createUsersInput.password,
-      },
-    });
+  async createUser(
+    createUsersInput: CreateUsersInput,
+  ): Promise<Omit<User, 'password'>> {
+    createUsersInput.password = await this.bcryptService.hash(
+      createUsersInput.password,
+    );
+
+    return this.sanitizeUser(
+      await this.prisma.user.create({
+        data: {
+          name: createUsersInput.name,
+          email: createUsersInput.email,
+          username: createUsersInput.username,
+          password: createUsersInput.password,
+        },
+      }),
+    );
   }
 
   async findUserById(id: number): Promise<User> {

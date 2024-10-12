@@ -12,6 +12,7 @@ import { ProjectType } from '../projects/project.type';
 import { Project, User } from '@prisma/client';
 import { ProjectsService } from '../projects/projects.service';
 import { CreateUsersInput } from './dto/create-users.input';
+import { UsersResponse } from './dto/users.response';
 @Resolver(() => UserType)
 export class UsersResolver {
   constructor(
@@ -22,7 +23,7 @@ export class UsersResolver {
   @Mutation(() => UserType)
   async createUser(
     @Args('createUsersInput') createUsersInput: CreateUsersInput,
-  ) {
+  ): Promise<UsersResponse> {
     return this.usersService.createUser(createUsersInput);
   }
 

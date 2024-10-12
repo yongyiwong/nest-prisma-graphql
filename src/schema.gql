@@ -43,6 +43,9 @@ input CreateUsersInput {
 
   """email"""
   email: String!
+
+  """Bio"""
+  bio: String!
 }
 
 input CreateProjectsInput {
