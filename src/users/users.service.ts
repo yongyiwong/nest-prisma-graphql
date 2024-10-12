@@ -10,6 +10,7 @@ import { LoginInput } from './dto/login.input';
 import {
   Exception,
   LoginInputException,
+  UnAuthorizedException,
   UserNotExitException,
   WrongPassword,
 } from '../shared/exceptions';
@@ -17,6 +18,7 @@ import jwtConfig from './config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { LoginResponse } from './gql/login.response';
+import { TokenInput } from './dto/token.input';
 
 @Injectable()
 export class UsersService {
@@ -141,5 +143,20 @@ export class UsersService {
         expiresIn,
       },
     );
+  }
+
+  async refreshTokens(tokenInput: TokenInput): Promise<LoginResponse> {
+    try {
+      const { sub } = await this.jwtService.verifyAsync(tokenInput.token, {
+        secret: this.jwtConfiguration.secret,
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+      });
+
+      const user = await this.findUserById(sub);
+      return this.generateTokens(user);
+    } catch (err) {
+      throw new UnAuthorizedException(err);
+    }
   }
 }

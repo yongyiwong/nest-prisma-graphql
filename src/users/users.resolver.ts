@@ -50,4 +50,9 @@ export class UsersResolver {
   async projects(@Parent() user: User): Promise<Project[]> {
     return this.projectsService.findProjectsByUserId(user.id);
   }
+
+  @Query(() => LoginResponse)
+  async refreshToken(@Args('token') token: string) {
+    return this.usersService.refreshTokens({ token });
+  }
 }
