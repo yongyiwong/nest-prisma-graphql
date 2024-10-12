@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { ProjectType } from '../projects/project.type';
+import { ProjectType } from '../../projects/project.type';
 
 @ObjectType()
 export class UserType {

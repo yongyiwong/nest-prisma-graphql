@@ -1,16 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUsersInput } from './dto/create-users.input';
-import { UserType } from './user.type';
+import { UserType } from './gql/user.type';
 import { UtilsService } from '../shared/utils/utils.service';
 import { BcryptService } from '../shared/hashing/bcrypt.service';
+import { JwtService } from '@nestjs/jwt';
+import { LoginInput } from './dto/login.input';
+import {
+  Exception,
+  LoginInputException,
+  UserNotExitException,
+  WrongPassword,
+} from '../shared/exceptions';
+import jwtConfig from './config/jwt.config';
+import { ConfigType } from '@nestjs/config';
+import { JWTPayload } from './interfaces/jwt-payload.interface';
+import { LoginResponse } from './gql/login.response';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private bcryptService: BcryptService,
+    private readonly jwtService: JwtService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
   async createUser(
@@ -30,6 +45,49 @@ export class UsersService {
         },
       }),
     );
+  }
+
+  async login(loginInput: LoginInput): Promise<LoginResponse> {
+    try {
+      if (!loginInput.email && !loginInput.username) {
+        throw new LoginInputException();
+      }
+
+      let user: UserType = null;
+
+      if (loginInput.username) {
+        user = await this.findUserByUserName(loginInput.username);
+      } else {
+        user = await this.findUserByEmail(loginInput.email);
+      }
+
+      if (!user) {
+        throw new UserNotExitException();
+      }
+
+      const isValidPassword = await this.bcryptService.compare(
+        loginInput.password,
+        user.password,
+      );
+
+      if (!isValidPassword) {
+        throw new WrongPassword();
+      }
+
+      return this.generateTokens(user);
+    } catch (e) {
+      throw new Exception(e);
+    }
+  }
+
+  async findUserByEmail(email: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
+
+  async findUserByUserName(username: string): Promise<User> {
+    return this.prisma.user.findUnique({
+      where: { username },
+    });
   }
 
   async findUserById(id: number): Promise<User> {
@@ -52,5 +110,36 @@ export class UsersService {
     const sanitized = user;
     delete sanitized['password'];
     return sanitized;
+  }
+
+  async generateTokens(user: User) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signToken<Partial<JWTPayload>>(
+        user.id,
+        this.jwtConfiguration.accessTokenTtl,
+        { email: user.email },
+      ),
+      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
+    ]);
+    return {
+      accessToken,
+      refreshToken,
+      user,
+    };
+  }
+
+  private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
+    return await this.jwtService.signAsync(
+      {
+        sub: userId,
+        ...payload,
+      },
+      {
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+        secret: this.jwtConfiguration.secret,
+        expiresIn,
+      },
+    );
   }
 }

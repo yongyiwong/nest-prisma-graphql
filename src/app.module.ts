@@ -44,6 +44,7 @@ import { PubSub } from 'graphql-subscriptions';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env', '.env.dev', '.env.stage', '.env.prod'],
     }),
     UsersModule,
     ProjectsModule,
