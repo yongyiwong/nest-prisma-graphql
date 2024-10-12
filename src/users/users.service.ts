@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUsersInput } from './dto/create-users.input';
-import { UserType } from './user.type';
+import { UserType } from './gql/user.type';
 import { UtilsService } from '../shared/utils/utils.service';
 import { BcryptService } from '../shared/hashing/bcrypt.service';
 import { JwtService } from '@nestjs/jwt';
@@ -16,7 +16,7 @@ import {
 import jwtConfig from './config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
-import { LoginResponse } from './dto/login.response';
+import { LoginResponse } from './gql/login.response';
 
 @Injectable()
 export class UsersService {

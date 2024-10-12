@@ -19,10 +19,37 @@ type UserType {
   projects: [ProjectType!]
 }
 
+type UsersResponse {
+  id: Int!
+  name: String!
+  username: String!
+  email: String!
+  bio: String
+  projects: [ProjectType!]
+}
+
+type LoginResponse {
+  user: UsersResponse!
+  accessToken: String!
+  refreshToken: String!
+}
+
 type Query {
+  logIn(loginInput: LoginInput!): LoginResponse!
   users: [UserType!]!
   projects: [ProjectType!]!
   projectsByUserId(userId: Int!): [ProjectType!]!
+}
+
+input LoginInput {
+  """email"""
+  email: String
+
+  """username"""
+  username: String
+
+  """password"""
+  password: String!
 }
 
 type Mutation {

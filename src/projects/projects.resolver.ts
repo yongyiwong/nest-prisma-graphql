@@ -10,7 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { ProjectsService } from './projects.service';
 import { ProjectType } from './project.type';
-import { UserType } from '../users/user.type';
+import { UserType } from '../users/gql/user.type';
 import { Project } from '@prisma/client';
 import { UsersService } from '../users/users.service';
 import { CreateProjectsInput } from './dto/create-projects.input';

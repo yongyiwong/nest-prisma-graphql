@@ -6,9 +6,14 @@ import { ProjectsModule } from '../projects/projects.module';
 import { BcryptService } from '../shared/hashing/bcrypt.service';
 import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './config/jwt.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ProjectsModule, JwtModule.registerAsync(jwtConfig.asProvider())],
+  imports: [
+    ProjectsModule,
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+  ],
   providers: [UsersResolver, UsersService, BcryptService, PrismaService],
   exports: [UsersService],
 })

@@ -7,18 +7,27 @@ import {
   Args,
 } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-import { UserType } from './user.type';
+import { UserType } from './gql/user.type';
 import { ProjectType } from '../projects/project.type';
 import { Project, User } from '@prisma/client';
 import { ProjectsService } from '../projects/projects.service';
 import { CreateUsersInput } from './dto/create-users.input';
-import { UsersResponse } from './dto/users.response';
+import { UsersResponse } from './gql/users.response';
+import { LoginResponse } from './gql/login.response';
+import { LoginInput } from './dto/login.input';
 @Resolver(() => UserType)
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private projectsService: ProjectsService,
   ) {}
+
+  @Query(() => LoginResponse)
+  async logIn(
+    @Args('loginInput') loginInput: LoginInput,
+  ): Promise<LoginResponse> {
+    return this.usersService.login(loginInput);
+  }
 
   @Mutation(() => UserType)
   async createUser(
