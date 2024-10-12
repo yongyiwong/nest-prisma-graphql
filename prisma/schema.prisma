@@ -16,7 +16,10 @@ datasource db {
 model User {
   id    Int    @id @default(autoincrement())
   name  String
+  username String @unique
   email String @unique
+  password String
+  bio   String?
   projects Project[] @relation("UserProjects") // Define the one-to-many relationship
 }
 

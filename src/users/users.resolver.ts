@@ -11,6 +11,7 @@ import { UserType } from './user.type';
 import { ProjectType } from '../projects/project.type';
 import { Project, User } from '@prisma/client';
 import { ProjectsService } from '../projects/projects.service';
+import { CreateUsersInput } from './dto/create-users.input';
 @Resolver(() => UserType)
 export class UsersResolver {
   constructor(
@@ -19,8 +20,10 @@ export class UsersResolver {
   ) {}
 
   @Mutation(() => UserType)
-  async createUser(@Args('name') name: string, @Args('email') email: string) {
-    return this.usersService.createUser(name, email);
+  async createUser(
+    @Args('createUsersInput') createUsersInput: CreateUsersInput,
+  ) {
+    return this.usersService.createUser(createUsersInput);
   }
 
   @Query(() => [UserType])

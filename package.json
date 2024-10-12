@@ -46,7 +46,8 @@
     "pg": "^8.13.0",
     "pino": "^9.4.0",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "type-graphql": "^2.0.0-rc.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
