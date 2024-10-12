@@ -37,6 +37,7 @@ type LoginResponse {
 type Query {
   logIn(loginInput: LoginInput!): LoginResponse!
   users: [UserType!]!
+  refreshToken(token: String!): LoginResponse!
   projects: [ProjectType!]!
   projectsByUserId(userId: Int!): [ProjectType!]!
 }
