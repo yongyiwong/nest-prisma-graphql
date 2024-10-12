@@ -12,7 +12,10 @@ type ProjectType {
 type UserType {
   id: Int!
   name: String!
+  username: String!
   email: String!
+  password: String!
+  bio: String
   projects: [ProjectType!]
 }
 
@@ -23,9 +26,26 @@ type Query {
 }
 
 type Mutation {
-  createUser(name: String!, email: String!): UserType!
+  createUser(createUsersInput: CreateUsersInput!): UserType!
   deleteUser(id: Float!): UserType!
   createProject(createProjectsInput: CreateProjectsInput!): ProjectType!
+}
+
+input CreateUsersInput {
+  """Name"""
+  name: String!
+
+  """username"""
+  username: String!
+
+  """Password"""
+  password: String!
+
+  """email"""
+  email: String!
+
+  """Bio"""
+  bio: String!
 }
 
 input CreateProjectsInput {

@@ -5,9 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [
-    forwardRef(() => UsersModule),
-  ],
+  imports: [forwardRef(() => UsersModule)],
   providers: [ProjectsService, ProjectsResolver, PrismaService],
   exports: [ProjectsService],
 })
