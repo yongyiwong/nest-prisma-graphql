@@ -24,7 +24,7 @@ export class Exception extends HttpException {
 }
 
 export class UnAuthorizedException extends HttpException {
-  constructor(err) {
+  constructor(err = null) {
     super('Not loged in yet', HttpStatus.FORBIDDEN);
   }
 }

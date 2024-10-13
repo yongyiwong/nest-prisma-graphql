@@ -36,6 +36,7 @@ type LoginResponse {
 
 type Query {
   logIn(loginInput: LoginInput!): LoginResponse!
+  me: UserType!
   users: [UserType!]!
   refreshToken(token: String!): LoginResponse!
   projects: [ProjectType!]!
@@ -55,7 +56,7 @@ input LoginInput {
 
 type Mutation {
   createUser(createUsersInput: CreateUsersInput!): UserType!
-  deleteUser(id: Float!): UserType!
+  deleteUser: UserType!
   createProject(createProjectsInput: CreateProjectsInput!): ProjectType!
 }
 

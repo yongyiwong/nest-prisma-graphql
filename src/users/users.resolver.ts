@@ -3,8 +3,9 @@ import {
   Query,
   Mutation,
   ResolveField,
-  Parent,
   Args,
+  Parent,
+  Context,
 } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { UserType } from './gql/user.type';
@@ -15,6 +16,9 @@ import { CreateUsersInput } from './dto/create-users.input';
 import { UsersResponse } from './gql/users.response';
 import { LoginResponse } from './gql/login.response';
 import { LoginInput } from './dto/login.input';
+import { AuthGuard } from './decorator/ auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { GqlContext } from './interfaces/context.interface';
 @Resolver(() => UserType)
 export class UsersResolver {
   constructor(
@@ -36,16 +40,25 @@ export class UsersResolver {
     return this.usersService.createUser(createUsersInput);
   }
 
+  @UseGuards(AuthGuard)
+  @Query(() => UserType)
+  async me(@Context() context: GqlContext) {
+    return context.req.user;
+  }
+
+  @UseGuards(AuthGuard)
   @Query(() => [UserType])
-  async users() {
+  async users(): Promise<Omit<User, 'password'>[]> {
     return this.usersService.findAllUsers();
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => UserType)
-  async deleteUser(@Args('id') id: number) {
-    return this.usersService.deleteUser(id);
+  async deleteUser(@Context() context: GqlContext) {
+    return this.usersService.deleteUser(context.req.user.id);
   }
 
+  @UseGuards(AuthGuard)
   @ResolveField(() => [ProjectType])
   async projects(@Parent() user: User): Promise<Project[]> {
     return this.projectsService.findProjectsByUserId(user.id);
