@@ -145,15 +145,23 @@ export class UsersService {
     );
   }
 
-  async refreshTokens(tokenInput: TokenInput): Promise<LoginResponse> {
+  public async getUserByToken(token: string): Promise<User> {
     try {
-      const { sub } = await this.jwtService.verifyAsync(tokenInput.token, {
+      const { sub } = await this.jwtService.verifyAsync(token, {
         secret: this.jwtConfiguration.secret,
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
       });
+      const user = this.sanitizeUser(await this.findUserById(sub));
+      return user;
+    } catch (e) {
+      throw new Exception(e);
+    }
+  }
 
-      const user = await this.findUserById(sub);
+  async refreshTokens(tokenInput: TokenInput): Promise<LoginResponse> {
+    try {
+      const user = await this.getUserByToken(tokenInput.token);
       return this.generateTokens(user);
     } catch (err) {
       throw new UnAuthorizedException(err);

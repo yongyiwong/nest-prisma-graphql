@@ -8,6 +8,7 @@ import {
   Parent,
   Subscription,
 } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { ProjectType } from './project.type';
 import { UserType } from '../users/gql/user.type';
@@ -15,9 +16,11 @@ import { Project } from '@prisma/client';
 import { UsersService } from '../users/users.service';
 import { CreateProjectsInput } from './dto/create-projects.input';
 import { PubSub } from 'graphql-subscriptions';
+import { AuthGuard } from '../users/decorator/ auth.guard';
 
 const pubSub = new PubSub();
 
+@UseGuards(AuthGuard)
 @Resolver(() => ProjectType)
 export class ProjectsResolver {
   constructor(
