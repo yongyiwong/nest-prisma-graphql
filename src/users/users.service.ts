@@ -114,7 +114,7 @@ export class UsersService {
     return sanitized;
   }
 
-  async generateTokens(user: User) {
+  async generateTokens(user: Omit<User, 'password'>) {
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<JWTPayload>>(
         user.id,

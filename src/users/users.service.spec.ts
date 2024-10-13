@@ -3,12 +3,24 @@ import { UsersService } from './users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { faker } from '@faker-js/faker';
 import { BcryptService } from '../shared/hashing/bcrypt.service';
+import { UsersResolver } from './users.resolver';
+import { ProjectsModule } from '../projects/projects.module';
+import { JwtModule } from '@nestjs/jwt';
+import jwtConfig from './config/jwt.config';
+import { ConfigModule } from '@nestjs/config';
+import { forwardRef } from '@nestjs/common';
+
 describe('UsersService', () => {
   let userService: UsersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService, PrismaService, BcryptService],
+      imports: [
+        forwardRef(() => ProjectsModule),
+        ConfigModule.forFeature(jwtConfig),
+        JwtModule.registerAsync(jwtConfig.asProvider()),
+      ],
+      providers: [UsersResolver, UsersService, BcryptService, PrismaService],
     }).compile();
 
     userService = module.get<UsersService>(UsersService);
