@@ -23,29 +23,32 @@ export class LoggerService implements LoggerBase {
     });
   }
 
-  private formatMessage(message: string, context?: string): string {
+  private formatMessage(message: any, context: string = ''): string {
     const formattedMessage =
       typeof message === 'object' ? JSON.stringify(message) : message;
-    return context ? `${formattedMessage} [${context}]` : formattedMessage;
+    return context ? `[${context}] ${formattedMessage}` : formattedMessage;
   }
 
-  public log(message: string, context?: string) {
+  public log(context: string = '', message: any) {
     this.logger.info(this.formatMessage(message, context));
   }
 
-  public error(message: string, trace: string = '', context?: string) {
-    this.logger.error({ trace }, this.formatMessage(message, context));
+  public error(context: string = '', message: any, info: any = '') {
+    this.logger.error(
+      { trace: `${this.formatMessage(info, context)}` },
+      this.formatMessage(message, context),
+    );
   }
 
-  public warn(message: string, context?: string) {
+  public warn(context: string = '', message: string) {
     this.logger.warn(this.formatMessage(message, context));
   }
 
-  public debug(message: string, context?: string) {
+  public debug(context: string = '', message: string) {
     this.logger.debug(this.formatMessage(message, context));
   }
 
-  public verbose(message: string, context?: string) {
+  public verbose(context: string = '', message: string) {
     this.logger.trace(this.formatMessage(message, context));
   }
 }

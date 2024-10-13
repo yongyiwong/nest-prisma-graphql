@@ -1,11 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TasksWorker } from './tasks.worker';
-import { ProjectsService } from '../projects/projects.service';
-
 import { BullModule } from '@nestjs/bullmq';
 import { ProjectsModule } from '../projects/projects.module';
-import { PrismaService } from '../prisma/prisma.service';
 import { TasksService } from './tasks.service';
+import { AppModule } from '../app.module';
 
 describe('TasksProcessor', () => {
   let provider: TasksWorker;
@@ -13,6 +11,7 @@ describe('TasksProcessor', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        AppModule,
         BullModule.forRoot({
           connection: {
             host: process.env.REDIS_HOST,
@@ -25,7 +24,7 @@ describe('TasksProcessor', () => {
         }),
         ProjectsModule,
       ],
-      providers: [TasksWorker, ProjectsService, PrismaService, TasksService],
+      providers: [TasksWorker, TasksService],
     }).compile();
 
     provider = module.get<TasksWorker>(TasksWorker);

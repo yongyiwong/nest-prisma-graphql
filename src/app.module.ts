@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UsersModule } from './users/users.module';
-import { PrismaService } from './prisma/prisma.service';
 import { join } from 'path';
 import { ProjectsModule } from './projects/projects.module';
 import { AppController } from './app.controller';
@@ -11,6 +10,8 @@ import { AppService } from './app.service';
 import { TasksModule } from './tasks/tasks.module';
 import { BullModule } from '@nestjs/bullmq';
 import { PubSub } from 'graphql-subscriptions';
+import { LoggerModule } from './shared/logger/logger.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -49,8 +50,10 @@ import { PubSub } from 'graphql-subscriptions';
     UsersModule,
     ProjectsModule,
     TasksModule,
+    PrismaModule,
+    LoggerModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, PubSub],
+  providers: [AppService, PubSub],
 })
 export class AppModule {}

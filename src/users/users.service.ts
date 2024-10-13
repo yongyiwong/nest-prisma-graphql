@@ -19,6 +19,7 @@ import { ConfigType } from '@nestjs/config';
 import { JWTPayload } from './interfaces/jwt-payload.interface';
 import { LoginResponse } from './gql/login.response';
 import { TokenInput } from './dto/token.input';
+import { LoggerService } from '../shared/logger/logger.service';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly logger: LoggerService,
   ) {}
 
   async createUser(
@@ -36,17 +38,19 @@ export class UsersService {
     createUsersInput.password = await this.bcryptService.hash(
       createUsersInput.password,
     );
-
-    return this.sanitizeUser(
-      await this.prisma.user.create({
-        data: {
-          name: createUsersInput.name,
-          email: createUsersInput.email,
-          username: createUsersInput.username,
-          password: createUsersInput.password,
-        },
-      }),
-    );
+    try {
+      this.logger.log('create user info', createUsersInput);
+      return this.sanitizeUser(
+        await this.prisma.user.create({
+          data: {
+            ...createUsersInput,
+          },
+        }),
+      );
+    } catch (e) {
+      this.logger.error('create user error', e, createUsersInput);
+      throw new Exception(e);
+    }
   }
 
   async login(loginInput: LoginInput): Promise<LoginResponse> {
@@ -78,6 +82,7 @@ export class UsersService {
 
       return this.generateTokens(user);
     } catch (e) {
+      this.logger.error('login error', e, loginInput);
       throw new Exception(e);
     }
   }
@@ -115,19 +120,24 @@ export class UsersService {
   }
 
   async generateTokens(user: Omit<User, 'password'>) {
-    const [accessToken, refreshToken] = await Promise.all([
-      this.signToken<Partial<JWTPayload>>(
-        user.id,
-        this.jwtConfiguration.accessTokenTtl,
-        { email: user.email },
-      ),
-      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
-    ]);
-    return {
-      accessToken,
-      refreshToken,
-      user,
-    };
+    try {
+      const [accessToken, refreshToken] = await Promise.all([
+        this.signToken<Partial<JWTPayload>>(
+          user.id,
+          this.jwtConfiguration.accessTokenTtl,
+          { email: user.email },
+        ),
+        this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
+      ]);
+      return {
+        accessToken,
+        refreshToken,
+        user,
+      };
+    } catch (e) {
+      this.logger.error(e, 'generateTokens error:');
+      throw new Exception(e);
+    }
   }
 
   private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
@@ -155,6 +165,7 @@ export class UsersService {
       const user = this.sanitizeUser(await this.findUserById(sub));
       return user;
     } catch (e) {
+      this.logger.error(e, `getUserByTOken error ${token}`);
       throw new Exception(e);
     }
   }
@@ -163,8 +174,9 @@ export class UsersService {
     try {
       const user = await this.getUserByToken(tokenInput.token);
       return this.generateTokens(user);
-    } catch (err) {
-      throw new UnAuthorizedException(err);
+    } catch (e) {
+      this.logger.error('refresh token error', e, tokenInput);
+      throw new UnAuthorizedException(e);
     }
   }
 }
