@@ -5,14 +5,15 @@ import { forwardRef } from '@nestjs/common';
 import { ProjectsResolver } from './projects.resolver';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersModule } from '../users/users.module';
+import { AppModule } from '../app.module';
 
 describe('ProjectsService', () => {
   let service: ProjectsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [forwardRef(() => UsersModule)],
-      providers: [ProjectsService, ProjectsResolver, PrismaService],
+      imports: [forwardRef(() => UsersModule), AppModule],
+      providers: [ProjectsService, ProjectsResolver],
       exports: [ProjectsService],
     }).compile();
 

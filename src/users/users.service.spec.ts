@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { PrismaService } from '../prisma/prisma.service';
 import { faker } from '@faker-js/faker';
 import { BcryptService } from '../shared/hashing/bcrypt.service';
 import { UsersResolver } from './users.resolver';
@@ -9,21 +8,29 @@ import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { forwardRef } from '@nestjs/common';
+import { AppModule } from '../app.module';
+import { UserType } from './gql/user.type';
 
 describe('UsersService', () => {
   let userService: UsersService;
-
+  let fakeUser: Omit<UserType, 'password'>;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        AppModule,
         forwardRef(() => ProjectsModule),
         ConfigModule.forFeature(jwtConfig),
         JwtModule.registerAsync(jwtConfig.asProvider()),
       ],
-      providers: [UsersResolver, UsersService, BcryptService, PrismaService],
+      providers: [UsersResolver, UsersService, BcryptService],
+      exports: [UsersService],
     }).compile();
 
     userService = module.get<UsersService>(UsersService);
+  });
+
+  afterAll(async () => {
+    await userService.deleteUser(fakeUser.id);
   });
 
   it('should be defined', () => {
@@ -33,11 +40,11 @@ describe('UsersService', () => {
   it('should create new user', async () => {
     const fakeName = faker.person.firstName();
     const fakeEmail = faker.internet.email();
-    const fakeUserName = faker.string.alphanumeric();
+    const fakeUserName = faker.string.numeric({ length: { min: 5, max: 10 } });
     const fakeBio = faker.person.bio();
     const fakePassword = faker.string.alphanumeric();
 
-    const fakeUser = await userService.createUser({
+    fakeUser = await userService.createUser({
       name: fakeName,
       email: fakeEmail,
       username: fakeUserName,

@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { TasksWorker } from './tasks.worker';
-import { ProjectsService } from '../projects/projects.service';
-import { ProjectsModule } from '../projects/projects.module';
-import { PrismaService } from '../prisma/prisma.service';
 import { TasksService } from './tasks.service';
+import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
   imports: [
@@ -20,6 +18,6 @@ import { TasksService } from './tasks.service';
     }),
     ProjectsModule,
   ],
-  providers: [TasksWorker, ProjectsService, PrismaService, TasksService],
+  providers: [TasksWorker, TasksService],
 })
 export class TasksModule {}

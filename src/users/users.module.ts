@@ -1,7 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
-import { PrismaService } from '../prisma/prisma.service';
 import { ProjectsModule } from '../projects/projects.module';
 import { BcryptService } from '../shared/hashing/bcrypt.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -14,7 +13,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
-  providers: [UsersResolver, UsersService, BcryptService, PrismaService],
+  providers: [UsersResolver, UsersService, BcryptService],
   exports: [UsersService],
 })
 export class UsersModule {}
