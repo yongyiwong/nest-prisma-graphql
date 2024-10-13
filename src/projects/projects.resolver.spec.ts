@@ -1,22 +1,17 @@
+import { forwardRef } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsResolver } from './projects.resolver';
 import { ProjectsService } from './projects.service';
-import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { BcryptService } from '../shared/hashing/bcrypt.service';
-
+import { UsersModule } from '../users/users.module';
 describe('ProjectsResolver', () => {
   let resolver: ProjectsResolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ProjectsResolver,
-        ProjectsService,
-        UsersService,
-        PrismaService,
-        BcryptService,
-      ],
+      imports: [forwardRef(() => UsersModule)],
+      providers: [ProjectsService, ProjectsResolver, PrismaService],
+      exports: [ProjectsService],
     }).compile();
 
     resolver = module.get<ProjectsResolver>(ProjectsResolver);

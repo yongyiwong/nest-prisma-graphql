@@ -1,12 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectsService } from './projects.service';
 
+import { forwardRef } from '@nestjs/common';
+import { ProjectsResolver } from './projects.resolver';
+import { PrismaService } from '../prisma/prisma.service';
+import { UsersModule } from '../users/users.module';
+
 describe('ProjectsService', () => {
   let service: ProjectsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ProjectsService],
+      imports: [forwardRef(() => UsersModule)],
+      providers: [ProjectsService, ProjectsResolver, PrismaService],
+      exports: [ProjectsService],
     }).compile();
 
     service = module.get<ProjectsService>(ProjectsService);

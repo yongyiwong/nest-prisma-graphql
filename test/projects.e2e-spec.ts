@@ -7,15 +7,23 @@ import { faker } from '@faker-js/faker';
 import { UserType } from '../src/users/gql/user.type';
 import { ProjectsService } from '../src/projects/projects.service';
 
+import { forwardRef } from '@nestjs/common';
+import { ProjectsResolver } from '../src/projects/projects.resolver';
+import { PrismaService } from '../src/prisma/prisma.service';
+import { UsersModule } from '../src/users/users.module';
+
 describe('Projects GraphQL (e2e)', () => {
   let app: INestApplication;
   let userService: UsersService;
   let projectService: ProjectsService;
   let user: Omit<UserType, 'password'>;
+  let accessToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule], // Import the main AppModule
+      imports: [AppModule, forwardRef(() => UsersModule)],
+      providers: [ProjectsService, ProjectsResolver, PrismaService],
+      exports: [ProjectsService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -36,6 +44,12 @@ describe('Projects GraphQL (e2e)', () => {
       password: fakePassword,
       bio: fakeBio,
     });
+
+    const userInfo = await userService.generateTokens(user);
+    expect(userInfo).toBeDefined();
+    expect(userInfo.accessToken).toBeDefined();
+
+    accessToken = userInfo.accessToken;
   });
 
   afterAll(async () => {
@@ -58,6 +72,7 @@ describe('Projects GraphQL (e2e)', () => {
 
     const response = await request(app.getHttpServer())
       .post('/graphql')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({
         query: createProjectMutation,
         variables: {
