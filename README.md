@@ -58,8 +58,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
-## Stay in touch
-
-- Author - [Yong Yi Wong](https://github.com/yongyiwong)
-- Contact - [yongyiwang.fullstack@gmail.com]
